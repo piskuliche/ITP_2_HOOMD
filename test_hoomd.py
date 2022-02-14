@@ -82,8 +82,10 @@ def gen_pair(ff):
     return params
                 
 
-
 if __name__ == "__main__":
+    # Converts charges to proper internal units
+    charge_conv = 0.0848385920
+
     ff ={}
 
     # Initialize a new snapshot
@@ -103,11 +105,12 @@ if __name__ == "__main__":
 
     # Initialize particle positions
     snapshot.particles.position = r
+    setcharge = lambda i: ff["DOPC"].atoms[i].charge*charge_conv
+    snapshot.particles.charge = np.array(list(map(setcharge,names)))
     
     # Initialize particle types, find unique types, and assign type ids
     # These use the map function to get arrays of all the types
     snapshot.particles = set_part(snapshot.particles,ff["DOPC"]) 
-    print(snapshot.particles.types)
 
     # Set Box Size
     snapshot.configuration.box = [100, 100, 100, 0, 0, 0]
@@ -122,6 +125,7 @@ if __name__ == "__main__":
     nl = hoomd.md.nlist.Cell(buffer=0.4)
     lj = hoomd.md.pair.LJ(nl, default_r_cut=1.2)
     lj.params = gen_pair(forcefield)
+    ew,coul = hoomd.md.long_range.pppm.make_pppm_coulomb_forces(nl, resolution=(64,64,64),order=6,r_cut=1.2)
 
     # Setup HOOMD Simulation
     # Bond Potential
@@ -149,7 +153,7 @@ if __name__ == "__main__":
     langevin = hoomd.md.methods.NVE(filter=hoomd.filter.All())
     integrator = hoomd.md.Integrator(dt=0.001,
                                      methods=[langevin],
-                                     forces=[lj,bondforces,angleforces,dihedralforces])
+                                     forces=[lj,ew,coul,bondforces,angleforces,dihedralforces])
     gsd_writer = hoomd.write.GSD(filename='molecular_trajectory.gsd',
                                  trigger=hoomd.trigger.Periodic(10),
                                  mode='xb')
