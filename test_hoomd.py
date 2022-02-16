@@ -52,7 +52,7 @@ def set_part(sspart,ff):
     sspart.typeid = np.array(list(map(type_idlist,atomtypes)))
     return sspart
 
-def set_snap(sselem,ff,ffelem):
+def set_snap(sselem,ff,ffelem,nmols):
     """
     This code takes the molecular info and the forcefield info and sets the bonds/angles/dihedrals
     Input:
@@ -73,7 +73,8 @@ def set_snap(sselem,ff,ffelem):
         -tmpg also probably breaks for more than 1 molecule, due to names being the same between molecules
     """
     #Set # of bonds,angles, or dihedrals
-    sselem.N = len(ffelem)
+    sselem.N = len(ffelem)*nmols
+    num_atoms = len(ff.amap)
     elemtypes,numgroups = [],[]
     # loop over bonds
     for elem in ffelem:
@@ -86,7 +87,6 @@ def set_snap(sselem,ff,ffelem):
             tmp += ff.atoms[atm].type+"-"
             # Append location where names == atm to tmpg
             tmpg.append(np.where(names==atm)[0][0])
-            print(np.where(names==atm))
         # Remove last "-"
         tmp = tmp[:-1]
         # Append string name to elemtypes
@@ -98,9 +98,18 @@ def set_snap(sselem,ff,ffelem):
     type_id_map = dict(zip(unique, u_ids))
     type_idlist = lambda etype: type_id_map[etype]
     sselem.types=np.array(unique)
-    sselem.typeid = np.array(list(map(type_idlist,elemtypes)))
-    # Set group
-    sselem.group = np.array(numgroups)
+
+    # make copies for each molecule
+    natms = len(ff.amap)
+    el = np.array(list(map(type_idlist,elemtypes)))
+    og = np.array(numgroups)
+    outelem, outgroup = el,og
+    for i in range(nmols-1):
+        outelem = np.concatenate((outelem,el),axis=0)
+        outgroup = np.concatenate((outgroup,np.add(og,natms*(i+1))),axis=0)
+    #exit()
+    sselem.typeid = outelem
+    sselem.group = outgroup
     return sselem
 
 def RB_to_OPLS(df):
@@ -166,6 +175,8 @@ if __name__ == "__main__":
     # Read in molecular force field
     ff["DOPC"] = read_mol_ff("DOPC-OPLS.itp")
 
+    sysinfo={"DOPC":72}
+
     # Read in total forcefield
     forcefield = read_ff_itp("OPLSAA.itp")
 
@@ -185,13 +196,14 @@ if __name__ == "__main__":
     snapshot.configuration.box = [100, 100, 100, 0, 0, 0]
 
     # Set bonds,angles,dihedrals between atoms
-    snapshot.bonds = set_snap(snapshot.bonds, ff["DOPC"], ff["DOPC"].bonds)
-    snapshot.angles  = set_snap(snapshot.angles, ff["DOPC"], ff["DOPC"].angles)
-    snapshot.dihedrals = set_snap(snapshot.dihedrals, ff["DOPC"], ff["DOPC"].dihedrals)
+    snapshot.bonds = set_snap(snapshot.bonds, ff["DOPC"], ff["DOPC"].bonds,sysinfo["DOPC"])
+    snapshot.angles  = set_snap(snapshot.angles, ff["DOPC"], ff["DOPC"].angles,sysinfo["DOPC"])
+    snapshot.dihedrals = set_snap(snapshot.dihedrals, ff["DOPC"], ff["DOPC"].dihedrals,sysinfo["DOPC"])
     # Save snapshot
     with gsd.hoomd.open(name='molecular.gsd', mode='wb') as f:
         f.append(snapshot)
 
+    
     # Below this point, only FF information should be generated. 
     nl = hoomd.md.nlist.Cell(buffer=0.4)
     lj = hoomd.md.pair.LJ(nl, default_r_cut=1.2)
@@ -221,13 +233,15 @@ if __name__ == "__main__":
     # Perform the MD simulation.
     sim = hoomd.Simulation(device=hoomd.device.CPU(), seed=1)
     sim.create_state_from_gsd(filename='molecular.gsd')
+    hoomd.Box.periodic=[True,True,True]
+    #ensemble = hoomd.md.methods.NPT(filter=hoomd.filter.All(),kT=2.51,tau=1, tauS=10, S=[1,1,1,0,0,0],couple='xy')
     ensemble = hoomd.md.methods.NVE(filter=hoomd.filter.All())
     integrator = hoomd.md.Integrator(dt=0.001,
                                      methods=[ensemble],
                                      forces=[lj,ew,coul,bondforces,angleforces,dihedralforces])
     gsd_writer = hoomd.write.GSD(filename='molecular_trajectory.gsd',
                                  trigger=hoomd.trigger.Periodic(1),
-                                 mode='xb')
+                                 mode='wb')
     sim.operations.integrator = integrator
     sim.operations.writers.append(gsd_writer)
     sim.run(10)
