@@ -92,7 +92,7 @@ if __name__ == "__main__":
     snapshot = gsd.hoomd.Snapshot()
     
     # Read the # of atoms, and the positions
-    N,r,names = read_gro("DOPC-OPLS.gro")
+    N,r,names = read_gro("test.gro")
 
     # Read in molecular force field
     ff["DOPC"] = read_mol_ff("DOPC-OPLS.itp")
@@ -150,15 +150,15 @@ if __name__ == "__main__":
     # Perform the MD simulation.
     sim = hoomd.Simulation(device=hoomd.device.CPU(), seed=1)
     sim.create_state_from_gsd(filename='molecular.gsd')
-    langevin = hoomd.md.methods.NVE(filter=hoomd.filter.All())
+    ensemble = hoomd.md.methods.NVE(filter=hoomd.filter.All())
     integrator = hoomd.md.Integrator(dt=0.001,
-                                     methods=[langevin],
+                                     methods=[ensemble],
                                      forces=[lj,ew,coul,bondforces,angleforces,dihedralforces])
     gsd_writer = hoomd.write.GSD(filename='molecular_trajectory.gsd',
-                                 trigger=hoomd.trigger.Periodic(10),
+                                 trigger=hoomd.trigger.Periodic(1),
                                  mode='xb')
     sim.operations.integrator = integrator
     sim.operations.writers.append(gsd_writer)
-    sim.run(500)
+    sim.run(10)
 
 
