@@ -1,0 +1,268 @@
+;======================================================================
+;  Forcefield OPLSaa Extension in GROMACS-4.5.5     by A.M. since 2008 at UJ/TUT 
+;   L I P I D S   D A T A B A S E
+;                                  * GPL (Glicero-Phospho-Lipids) June 2012
+; Present SET_1b 20June2012
+
+; Legend
+; IMP =improper dihedral
+
+; Atom Types
+; C  - Sp2 carbonyl carbon like Amide
+; CO - carbonly carbon like Ester
+; CT - aliphatic carbon
+; CA - aronatic catbon
+; CM - -CT-CM=CM-CT-
+; HC/HA/HM - hydrogens
+; H - polar hydrogen in amide
+; O - Oxygen like Amide
+; OS - Alkoxyl Oxygen like Ester
+; LIPIDS
+; CL3 - CT in CHN3
+; CL2 - CT in CH2
+; HLC - HC
+; CLL - sp2 in ester
+; OLL - in ester
+; OSa - alkoxyl ox in alphatic vicinity
+; OSp - alkoxyl ox in Phosphor visinity
+; O2P - oxygen attached to Phosphorus
+; OSv - alcoxyl in vinyl ester
+; OSe - alcoxyl in ether
+; N3c - choline
+; N3e - ethylammonium
+; CN3 - carbon attached to N3e in PC+
+; HCN - hydrogen in TMA+
+; HN3 - hyfrogen in EhanolAmmonium EM+
+; H3 - ammonium ions (boss h3)
+; CMc - CM in Cis n-alkene
+; CMt - CM in Trans n-alkene
+; HM  - HC in n-alkene (cis/trans) 
+
+[ atomtypes ] 
+  OT3  15.9994  -0.834 A  3.15061e-01  6.36386e-01 ;
+  HT3   1.0080   0.417 A  0.00000e+00  0.00000e+00 ;
+
+  CT    12.01100   0.0  A  3.50000E-01  2.7614400E-01 ;
+  HC     1.00800   0.0  A  2.50000E-01  1.2552000E-01 ;
+
+  CL2  12.01100   0.0  A  3.37600E-01  2.7614400E-01 ; 
+  CL3  12.01100   0.0  A  3.37600E-01  2.7614400E-01 ; 
+  HLC   1.00800   0.0  A  2.46800E-01  1.2552000E-01 ; 
+
+  CN3   12.01100   0.0  A  3.50000E-01  2.7614400E-01 ;
+  HCN    1.00800   0.0  A  2.50000E-01  1.2552000E-01 ;
+  CLL   12.01100   0.0  A  3.75000E-01  4.3932000E-01 ;
+  OLL   15.99940   0.0  A  2.96000E-01  8.7864000E-01 ;
+  HN3    1.00800   0.0  A  0.00000E+00  0.0000000E+00 ;
+  CTe   12.01100   0.0  A  3.50000E-01  2.7614400E-01 ;
+  HCe    1.00800   0.0  A  2.50000E-01  6.2760000E-02 ;
+  O2P   15.99940   0.0  A  3.15000E-01  8.3680000E-01 ;
+  OSp   15.99940   0.0  A  2.90000E-01  5.8576000E-01 ;
+  OSh   15.99940   0.0  A  2.90000E-01  5.8576000E-01 ;
+  OSa   15.99940   0.0  A  3.00000E-01  7.1128000E-01 ;
+
+  N3c   14.00670   0.0  A  3.25000E-01  7.1128000E-01 ;
+  N3e   14.00670   0.0  A  3.25000E-01  7.1128000E-01 ;
+  P     30.97376   0.0  A  3.74000E-01  8.3680000E-01 ;
+
+  CMc   12.01100   0.0  A  3.55000E-01  3.1798400E-01 
+  CMt   12.01100   0.0  A  3.55000E-01  3.1798400E-01 
+  HM     1.00800   0.0  A  2.42000E-01  1.2552000E-01
+
+[ bondtypes ]
+  CT   CT   1  1.529E-01  2.242624E+05 ;
+  CT   HC   1  1.090E-01  2.845120E+05 ;
+  CL2  CL2  1  1.529E-01  2.242624E+05 ;
+  CL2  HLC  1  1.090E-01  2.845120E+05 ;
+  CL3  CL2  1  1.529E-01  2.242624E+05 ;
+  CL3  HLC  1  1.090E-01  2.845120E+05 ;
+
+  CTe  HCe  1  1.090E-01  2.845120E+05 ;
+  CN3  HCN  1  1.090E-01  2.845120E+05 ;
+
+  CLL  CT   1  1.522E-01  2.652656E+05 ;
+  CLL  CL2  1  1.522E-01  2.652656E+05 ;
+  CLL  CL3  1  1.522E-01  2.652656E+05 ;
+  CLL  OLL  1  1.229E-01  4.769760E+05 ;
+
+  N3c  CT   1  1.471E-01  3.071056E+05 ;
+  N3e  CT   1  1.471E-01  3.071056E+05 ;
+  N3c  CN3  1  1.471E-01  3.071056E+05 ;
+  N3e  HN3  1  1.010E-01  3.631712E+05 ;
+
+  OSp  P    1  1.610E-01  1.924640E+05 ;
+  OSa  CLL  1  1.327E-01  1.790752E+05 ;
+
+  O2P   P   1  1.480E-01  4.393200E+05 ;
+  OSp  CT   1  1.410E-01  2.677760E+05 ;
+  OSa  CT   1  1.410E-01  2.677760E+05 ; 
+
+  CMc  CL2  1  1.510E-01  2.652656E+05 
+  CMc  HM   1  1.080E-01  2.845120E+05 
+  CMc  CMc  1  1.340E-01  4.594032E+05 
+  CMt  CL2  1  1.510E-01  2.652656E+05 
+  CMt  HM   1  1.080E-01  2.845120E+05 
+  CMt  CMt  1  1.340E-01  4.594032E+05 
+
+[ angletypes ] 
+ CT   CT   CT    1  1.1270E+02  4.882728E+02 ;
+  CT   CT   HC    1  1.1070E+02  3.138000E+02 ;
+  HC   CT   HC    1  1.0780E+02  2.761440E+02 ;
+  CL2  CL2  CL2   1  1.1270E+02  4.882728E+02 ;
+  CL2  CL2  HLC   1  1.1070E+02  3.138000E+02 ;
+  HLC  CL2  HLC   1  1.0780E+02  2.761440E+02 ;
+
+  CL3  CL2  CL2   1  1.1270E+02  4.882728E+02 ;
+  CL2  CL3  HLC   1  1.1070E+02  3.138000E+02 ;
+  CL3  CL2  HLC   1  1.1070E+02  3.138000E+02 ;
+  CL3  CL3  HLC   1  1.1070E+02  3.138000E+02 ;
+  HLC  CL3  HLC   1  1.0780E+02  2.761440E+02 ;
+
+;PC
+  N3c  CT   CT    1  1.1120E+02  6.694400E+02 ;
+  N3e  CT   CT    1  1.1120E+02  6.694400E+02 ;
+  N3c  CT   HC    1  1.0950E+02  2.928800E+02 ;
+  N3e  CT   HC    1  1.0950E+02  2.928800E+02 ;
+  CN3  N3c  CN3   1  1.0950E+02  2.928800E+02 ;
+  CN3  N3c  CT    1  1.0950E+02  2.928800E+02 ;
+  N3c  CN3  HCN   1  1.0950E+02  2.928800E+02 ;
+  HCN  CN3  HCN   1  1.0780E+02  2.761440E+02 ;
+
+
+;OS /C
+  O2P  P    O2P   1  1.1990E+02  1.171520E+03 ;
+  O2P  P    OSp   1  1.0823E+02  8.368000E+02 ;
+  OSp  P    OSp   1  1.0260E+02  3.765600E+02 ;
+  CT   OSp  P     1  1.2050E+02  8.368000E+02 ;
+  CT   CT   OSp   1  1.0950E+02  4.184000E+02 ;
+  CT   CT   OSa   1  1.0950E+02  4.184000E+02 ;
+
+  OSp  CT   HC    1  1.0950E+02  2.928800E+02 ;
+  OSa  CT   HC    1  1.0950E+02  2.928800E+02 ;
+
+  CT   OSa  CLL   1  1.1690E+02  6.945440E+02 ;
+  OSa  CLL  OLL   1  1.2340E+02  6.945440E+02 ;
+  OSa  CLL  CT    1  1.1140E+02  6.778080E+02 ;
+  OSa  CLL  CL2   1  1.1140E+02  6.778080E+02 ;
+  OSa  CLL  CL3   1  1.1140E+02  6.778080E+02 ;
+  CLL  CT   HC    1  1.0950E+02  2.928800E+02 ;
+  CLL  CL2  HLC   1  1.0950E+02  2.928800E+02 ;
+  CLL  CL3  HLC   1  1.0950E+02  2.928800E+02 ;
+  CLL  CT   CT    1  1.1110E+02  5.271840E+02 ;
+  CLL  CL2  CL2   1  1.1110E+02  5.271840E+02 ;
+
+  CT   CLL  OLL   1  1.2040E+02  6.694400E+02 ;
+  CL2  CLL  OLL   1  1.2040E+02  6.694400E+02 ;
+  CL3  CLL  OLL   1  1.2040E+02  6.694400E+02 ;
+
+  CL2  CL2  CMc   1  1.1110E+02  5.271840E+02 
+  CL3  CL2  CMc   1  1.1110E+02  5.271840E+02 
+  HLC  CL2  CMc   1  1.0950E+02  2.928800E+02 
+  HLC  CL3  CMc   1  1.0950E+02  2.928800E+02 
+  CL2  CMc  CMc   1  1.2400E+02  5.857600E+02 
+  CL3  CMc  CMc   1  1.2400E+02  5.857600E+02 
+  HM   CMc  CMc   1  1.2000E+02  2.928800E+02 
+  CL2  CMc  HM    1  1.1700E+02  2.928800E+02 
+  CL2  CL2  CMt   1  1.1110E+02  5.271840E+02 
+  HLC  CL2  CMt   1  1.0950E+02  2.928800E+02 
+  CL2  CMt  CMt   1  1.2400E+02  5.857600E+02 
+  HM   CMt  CMt   1  1.2000E+02  2.928800E+02 
+  CL2  CMt  HM    1  1.1700E+02  2.928800E+02 
+
+[ dihedraltypes ]
+  CT  CT  CT  CT   3   2.92880  -1.46440   0.20920  -1.67360   0.00000   0.00000 ;
+  CT  CT  CT  HC   3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  HC  CT  CT  HC   3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  CL2 CL2 CL2 HLC  3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  HLC CL2 CL2 HLC  3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  CL2 CL2 CL3 HLC  3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  CL3 CL2 CL2 HLC  3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  HLC CL3 CL3 HLC  3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  HLC CL2 CL3 HLC  3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  CL3 CL2 CL2 CL2 3   1.81211  -0.948788 -3.15209   1.32173   4.32914  -3.39430  ;
+  CL2 CL2 CL2 CL2 3   1.81211  -0.948788 -3.15209   1.32173   4.32914  -3.39430  ;
+  CT  OSp P   OSp  3  -8.06678  12.1177    6.92     -5.60552   1.0315   -6.20684 ;
+  CT  OSp P   O2P  3   0.0       0.0       0.0       0.0       0.0       0.0     ;
+  P   OSp CT  CT   3  -5.62590   2.08175   7.69277   0.01874  -4.16736   0.0     ;
+  N3c CT  CT  OSp 3   22.054   -21.6956   -9.81734   4.40504   7.47583  -1.83112 ;
+  CN3 N3c CT  CT  3    3.04219  -1.35185   0.51798  -2.20832   0.0       0.0     ;
+  CLL OSa CT  CT  3   1.41427  -7.75675   1.79959   0.89693   5.00958  -1.25146 ; 
+  CT  OSa CLL CL2 3  23.1889    8.13575 -24.1501   -6.28324  -1.31325  -0.07120 ; 
+  CT  OSa CLL OLL 3  21.43882   0.0     -21.43882   0.0       0.0       0.0     ; 
+  OSa CLL CL2 CL2 3   5.70666  -3.13699  -4.75233  -0.52256   2.10971   0.56666 ; 
+  OLL CLL CL2 CL2 3   0.0       0.0       0.0       0.0       0.0       0.0     ; 
+  CLL CL2 CL2 CL2 3  -6.56195   9.44961  -4.85931  -8.09471   6.90301   3.02207 ; 
+  CLL CL2 CL2 CL3 3  -6.56195   9.44961  -4.85931  -8.09471   6.90301   3.02207 ; 
+  OSp CT  CT  CT  3  -1.95312   5.1608   -6.56892  -4.64256   7.48961   0.72768 ;
+  OSp CT  CT  OSa 3   2.79521  -2.65747   6.37944 -10.2248    3.34445   0.62514 ;
+  OSa CT  CT  CT  3  -3.89873   4.47726  -3.24217  -3.29609   5.89817   0.13369 ;
+  OSa CT  CT  OSa 3   1.66966 -10.5566    6.80534  -1.61     -1.91353   6.19098 ;
+
+;Light
+  P   OSp CT  HC   3   0.62760   1.88280   0.00000  -2.51040   0.00000   0.00000 ;
+  N3c CT  CT  HC  3    0.80333   2.40998   0.0      -3.21331   0.0       0.0     ;
+  N3e CT  CT  HC  3    0.80333   2.40998   0.0      -3.21331   0.0       0.0     ;
+  CN3 N3c CT  HC  3    0.63116   1.89347   0.00000  -2.52463   0.00000   0.00000 ;
+  CT  N3c CN3 HCN 3    0.63116   1.89347   0.00000  -2.52463   0.00000   0.00000 ;
+  CN3 N3c CN3 HCN 3    0.63116   1.89347   0.00000  -2.52463   0.00000   0.00000 ;
+  CLL OSa CT  HC  3    0.41422   1.24265   0.0      -1.65686   0.0       0.0     ;
+  OSa CLL CL2 HLC 3    0.27614   0.82843   0.0      -1.10458   0.0       0.0     ;
+  OLL CLL CL2 HLC 3    0.0       0.0       0.0       0.0       0.0       0.0     ;
+  CLL CL2 CL2 HLC 3   -0.20920  -0.62760   0.00000   0.83680   0.00000   0.00000 ;
+  OSp CT  CT  HC  3    0.97906   2.93717   0.00000  -3.91622   0.00000   0.00000 ;
+  OSa CT  CT  HC  3    0.97906   2.93717   0.00000  -3.91622   0.00000   0.00000 ;
+
+  CL2 CMc CMc CL2  3  44.4498   -2.39164 -81.248     8.87284  34.797    -4.50675 
+  HM  CMc CMc HM   3  58.57600   0.00000 -58.57600  -0.00000  -0.00000   0.00000 
+  HM  CMc CMc CL2  3  58.57600   0.00000 -58.57600  -0.00000  -0.00000   0.00000 
+  CMc CMc CL2 CL2  3  -0.62177  -3.27962  -0.66624   7.55576  -2.98813   0.0     
+  CMc CMc CL2 HLC  3  -0.77822  -2.33467   0.00000   3.11290  -0.00000   0.0     
+  HM  CMc CL2 HLC  3   0.66526   1.99577   0.00000  -2.66102  -0.00000   0.0     
+  HM  CMc CL2 CL2  3   0.0       0.0       0.0       0.0       0.0       0.0     
+  HM  CMc CL2 CL3  3   0.0       0.0       0.0       0.0       0.0       0.0     
+  CMc CL2 CL2 CL2  3   0.0       1.01888   1.44976  -1.12002   0.425775 -1.60776 
+  CMc CL2 CL2 HLC  3   0.76567   2.29702   0.00000  -3.06269  -0.00000   0.0     
+  CMc CL2 CL3 HLC  3   0.76567   2.29702   0.00000  -3.06269  -0.00000   0.0     
+  CL2 CMt CMt CL2  3  62.0618   -3.32325 -91.1613    4.97737  27.3118    0.52638 
+  HM  CMt CMt HM   3  58.57600   0.00000 -58.57600  -0.00000  -0.00000   0.00000 
+  HM  CMt CMt CL2  3  58.57600   0.00000 -58.57600  -0.00000  -0.00000   0.00000 
+  CMt CMt CL2 CL2  3  -1.25178  -4.42861   1.98331   4.08525  -3.10185   2.63757 
+  CMt CMt CL2 HLC  3  -0.77822  -2.33467   0.00000   3.11290  -0.00000   0.0     
+  HM  CMt CL2 HLC  3   0.66526   1.99577   0.00000  -2.66102  -0.00000   0.0     
+  HM  CMt CL2 CL2  3   0.0       0.0       0.0       0.0       0.0       0.0     
+  HM  CMt CL2 CL3  3   0.0       0.0       0.0       0.0       0.0       0.0     
+  CMt CL2 CL2 CL2  3   0.232717  0.0       1.20933   0.661838  0.315497 -2.24674 
+  CMt CL2 CL2 HLC  3   0.76567   2.29702   0.00000  -3.06269  -0.00000   0.0     
+  CMt CL2 CL3 HLC  3   0.76567   2.29702   0.00000  -3.06269  -0.00000   0.0     
+
+
+
+; from GMX-4.5.4
+; Improper OPLS dihedrals to keep groups planar.
+; (OPLS doesnt use impropers for chiral atoms).
+; Since these functions are periodic of the form 1-cos(2*x), they are actually
+; implemented as proper dihedrals [1+cos(2*x+180)] for the moment, 
+; to keep things compatible.
+; The defines are used in ffoplsaa.rtp or directly in your .top file.
+
+; CARBONYL O?-C -X -Y improper torsion. C can be C_2 or C_3 too.
+#define improper_O_C_X_Y        180.0     43.93200   2
+
+; X-NO-ON-NO improper torsion.
+#define improper_X_NO_ON_NO     180.0     43.93200   2
+
+; N2-X-N2-N2 improper torsion.
+#define improper_N2_X_N2_N2     180.0     43.93200   2
+
+; AMIDE H-N  Z -N?-X -Y improper torsion
+#define improper_Z_N_X_Y        180.0      4.18400   2
+
+; Double Z -CM-X -Y improper torsion. CM can be C= too.
+#define improper_Z_CM_X_Y       180.0     62.76000   2
+
+; Aromatic Z -CA-X -Y improper torsion. CA is any ring carbon (CA,CB,CN,CV,CW,CR,CK,CQ,CS,C*)
+#define improper_Z_CA_X_Y       180.0      4.60240   2
+
+
+
+
