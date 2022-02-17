@@ -158,6 +158,21 @@ def gen_pair(ff):
             entry = tuple([ai,aj])
             params[entry]={"sigma":mix_geometric(ff.sigma[ai],ff.sigma[aj]),"epsilon":mix_geometric(ff.epsilon[ai],ff.sigma[aj])}
     return params
+
+def special_pairs(ff):
+    pairs=[]
+    for pair in ff.pairs:
+        nm =""
+        nmg = []
+        for i in pair:
+            nmg.append(names[i])
+            nm += names[i]+"-"
+        pairs.append(nmg)
+        print(nm[:-1])
+    
+
+    return
+
                 
 
 if __name__ == "__main__":
@@ -193,22 +208,27 @@ if __name__ == "__main__":
     snapshot.particles = set_part(snapshot.particles,ff["DOPC"]) 
 
     # Set Box Size
-    snapshot.configuration.box = [100, 100, 100, 0, 0, 0]
+    snapshot.configuration.box = [200, 200, 200, 0, 0, 0]
 
     # Set bonds,angles,dihedrals between atoms
     snapshot.bonds = set_snap(snapshot.bonds, ff["DOPC"], ff["DOPC"].bonds,sysinfo["DOPC"])
     snapshot.angles  = set_snap(snapshot.angles, ff["DOPC"], ff["DOPC"].angles,sysinfo["DOPC"])
     snapshot.dihedrals = set_snap(snapshot.dihedrals, ff["DOPC"], ff["DOPC"].dihedrals,sysinfo["DOPC"])
+
+    special_pairs(ff["DOPC"])
     # Save snapshot
     with gsd.hoomd.open(name='molecular.gsd', mode='wb') as f:
         f.append(snapshot)
 
     
     # Below this point, only FF information should be generated. 
-    nl = hoomd.md.nlist.Cell(buffer=0.4)
+    nl = hoomd.md.nlist.Cell(buffer=0.1)
     lj = hoomd.md.pair.LJ(nl, default_r_cut=1.2)
+    lj_spec = hoomd.md.special_pair.LJ()
     lj.params = gen_pair(forcefield)
+    lj_spec.params = gen_pair(forcefield)
     ew,coul = hoomd.md.long_range.pppm.make_pppm_coulomb_forces(nl, resolution=(64,64,64),order=6,r_cut=1.2)
+    coul_spec = hoomd.md.special_pair.Coulomb()
 
     # Setup HOOMD Simulation
     # Bond Potential
@@ -233,17 +253,29 @@ if __name__ == "__main__":
     # Perform the MD simulation.
     sim = hoomd.Simulation(device=hoomd.device.CPU(), seed=1)
     sim.create_state_from_gsd(filename='molecular.gsd')
-    hoomd.Box.periodic=[True,True,True]
-    #ensemble = hoomd.md.methods.NPT(filter=hoomd.filter.All(),kT=2.51,tau=1, tauS=10, S=[1,1,1,0,0,0],couple='xy')
-    ensemble = hoomd.md.methods.NVE(filter=hoomd.filter.All())
+    sim.state.thermalize_particle_momenta(filter=hoomd.filter.All(), kT=2.5)
+    ensemble = hoomd.md.methods.NPT(filter=hoomd.filter.All(),kT=2.5,tau=1, tauS=10, S=[1/16,1/16,1/16,0,0,0],couple='xy')
+    #ensemble = hoomd.md.methods.NVE(filter=hoomd.filter.All())
     integrator = hoomd.md.Integrator(dt=0.001,
                                      methods=[ensemble],
                                      forces=[lj,ew,coul,bondforces,angleforces,dihedralforces])
     gsd_writer = hoomd.write.GSD(filename='molecular_trajectory.gsd',
                                  trigger=hoomd.trigger.Periodic(1),
                                  mode='wb')
+    thermodynamic_properties = hoomd.md.compute.ThermodynamicQuantities(filter=hoomd.filter.All())
+    sim.operations.computes.append(thermodynamic_properties)
+    logger = hoomd.logging.Logger()
+    logger.add(thermodynamic_properties)
+
+    gsd_writer2 = hoomd.write.GSD(filename='log.gsd',
+                             trigger=hoomd.trigger.Periodic(1),
+                             mode='wb',
+                             filter=hoomd.filter.Null())
     sim.operations.integrator = integrator
     sim.operations.writers.append(gsd_writer)
+    sim.operations.writers.append(gsd_writer2)
+    gsd_writer2.log = logger
     sim.run(10)
+    print(thermodynamic_properties.kinetic_temperature)
 
 
