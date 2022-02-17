@@ -278,7 +278,6 @@ if __name__ == "__main__":
                             energy_tol=1e-7)
     fire.methods.append(hoomd.md.methods.NVE(hoomd.filter.All()))
     sim.operations.integrator = fire
-    fire.converged()
     while not(fire.converged):
         sim.run(100)
 
